@@ -51,12 +51,6 @@ class MyDeps:
 
 agent = Agent(model, system_prompt=system_prompt, deps_type=MyDeps)
 
-# (
-#     "user will gives you folder path and you should Read all cs file in it with 'readCSFile' function help and gives all thoes contents." \
-#     "You should refactore the contents, add comments on code, and add a full and clean XML summary on each method. " \
-#     "Then use 'Write_Refactored_cs_file' this function to write result in new file with same file name additional -refactored" \
-#     "may file had relate to eachother!"
-# )
 
 @agent.tool
 def readCSFile(ctx: RunContext[MyDeps], folder_name: str) -> dict[str,str]:
@@ -76,6 +70,7 @@ def readCSFile(ctx: RunContext[MyDeps], folder_name: str) -> dict[str,str]:
 @agent.tool
 def Write_Refactored_cs_file(ctx: RunContext[MyDeps], contents: dict[str, str]):
     for file_path, new_content in contents.items():
+        print(file_path)
         base, ext = os.path.splitext(file_path)
         if ext.lower() != '.cs':
             print(f"Skipping non-C# file: {file_path}")
@@ -101,6 +96,3 @@ if __name__ == "__main__":
     parser.add_argument("folder", help="Path to the folder containing C# files")
     args = parser.parse_args()
     asyncio.run(main(args.folder))
-
-# res = agent.run_sync('G:/New folder')
-#print(res.output)
