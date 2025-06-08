@@ -8,7 +8,7 @@ from pathlib import Path
 api_path = Path(__file__).resolve().parent.parent / 'Security' / 'Pydantic.txt'
 api = api_path.read_text()
 
-model = OpenAIResponsesModel('', provider=OpenAIProvider(api_key=api))
+model = OpenAIResponsesModel('gpt-4o-mini', provider=OpenAIProvider(api_key=api))
 
 class User(BaseModel):
     name: str
