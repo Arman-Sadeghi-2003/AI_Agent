@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from datetime import datetime as dt
 from pathlib import Path
 
-api_path = Path(__file__).resolve().parent.parent / 'Security' / 'Pydantic.txt'
+api_path = Path(__file__).resolve().parent.parent / 'Security' / 'openai_ai_news.txt'
 api = api_path.read_text()
 
 model = OpenAIResponsesModel('gpt-4o-mini', provider=OpenAIProvider(api_key=api))
