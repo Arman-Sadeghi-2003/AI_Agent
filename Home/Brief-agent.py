@@ -1,17 +1,24 @@
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_ai.models.google import GoogleModel
+from pydantic_ai.providers.google import GoogleProvider
 from pathlib import Path
 
 api_path = Path(__file__).resolve().parent.parent / 'Security' / 'openai_ai_news.txt'
 api_key = api_path.read_text()
-
 model = OpenAIModel(model_name='gpt-4o', provider=OpenAIProvider(api_key=api_key))
 
-Brief_agent = Agent(model=model, 
-                        system_prompt="You are a brief agent and you will give the EN sentence then get a"
-                        "Brief of that and after that translate it to the Persian language. choose a file name for that content."
-                        "use a line with (-) for separate the EN and IR contents."
+agp = Path(__file__).resolve().parent.parent / 'Security' / 'google.txt'
+aga = agp.read_text()
+gmodel = GoogleModel('gemini-2.0-flash', provider=GoogleProvider(api_key=aga))
+
+
+Brief_agent = Agent(model=gmodel, 
+                        system_prompt="You are a brief agent and you will give a part of EN article then get a"
+                        "Brief and useful content of that and after that translate it to the Persian language. choose a file name for that content."
+                        "use a line separator for storing both the EN and IR contents in a single file. But remember add orginal article on top of the Briefed"
+                        "The final result of the content should be like this: orginal article - EN brief - Translate FA Brief"
                         "Use 'Writer' tool for write final content both En and IR in a file"
                         )
 
@@ -25,17 +32,11 @@ def Writer(briefedContent: str,fileName: str):
         print(Exception)
 
 content = '''
-How are memories stored and retrieved?
+When a fire chief encounters a new blaze, he quickly makes predictions about how to best position his men. Running such simulations of the future — without the risk and expense of actually attempting them — allows “our hypotheses to die in our stead,” as philosopher Karl Popper put it. For this reason, the emulation of possible futures is one of the key businesses that intelligent brains invest in.
 
-When you learn a new fact, like someone’s name, there are physical changes in the structure of your brain. But we don’t yet comprehend exactly what those changes are, how they are orchestrated across vast seas of synapses and neurons, how they embody knowledge, or how they are read out decades later for retrieval.
+Yet we know little about how the brain’s future simulator works because traditional neuroscience technologies are best suited for correlating brain activity with explicit behaviors, not mental emulations. One idea suggests that the brain’s resources are devoted not only to processing stimuli and reacting to them (watching a ball come at you) but also to constructing an internal model of that outside world and extracting rules for how things tend to behave (knowing how balls move through the air). Internal models may play a role not only in motor acts, like catching, but also in perception. For example, vision draws on significant amounts of information in the brain, not just on input from the retina. Many neuroscientists have suggested over the past few decades that perception arises not simply by building up bits of data through a hierarchy but rather by matching incoming sensory data against internally generated expectations.
 
-One complication is that there are many kinds of memories. The brain seems to distinguish short-term memory (remembering a phone number just long enough to dial it) from long-term memory (what you did on your last birthday). Within long-term memory, declarative memories (like names and facts) are distinct from non­declarative memories (riding a bicycle, being affected by a subliminal message), and within these general categories are numerous subtypes. Different brain structures seem to support different kinds of learning and memory; brain damage can lead to the loss of one type without disturbing the others.
-
-Nonetheless, similar molecular mechanisms may be at work in these memory types. Almost all theories of memory propose that memory storage depends on synapses, the tiny connections between brain cells. When two cells are active at the same time, the connection between them strengthens; when they are not active at the same time, the connection weakens. Out of such synaptic changes emerges an association. Experience can, for example, fortify the connections between the smell of coffee, its taste, its color, and the feel of its warmth. Since the populations of neurons connected with each of these sensations are typically activated at the same time, the connections between them can cause all the sensory associations of coffee to be triggered by the smell alone.
-
-But looking only at associations — and strengthened connections between neurons — may not be enough to explain memory. The great secret of memory is that it mostly encodes the relationships between things more than the details of the things themselves. When you memorize a melody, you encode the relationships between the notes, not the notes per se, which is why you can easily sing the song in a different key.
-
-Memory retrieval is even more mysterious than storage. When I ask if you know Alex Ritchie, the answer is immediately obvious to you, and there is no good theory to explain how memory retrieval can happen so quickly. Moreover, the act of retrieval can destabilize the memory. When you recall a past event, the memory becomes temporarily susceptible to erasure. Some intriguing recent experiments show it is possible to chemically block memories from reforming during that window, suggesting new ethical questions that require careful consideration.
+But how does a system learn to make good predictions about the world? It may be that memory exists only for this purpose. This is not a new idea: Two millennia ago, Aristotle and Galen emphasized memory as a tool in making successful predictions for the future. Even your memories about your life may come to be understood as a special subtype of emulation, one that is pinned down and thus likely to flow in a certain direction.
 '''
 
 result = Brief_agent.run_sync(content)
